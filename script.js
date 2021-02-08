@@ -1,37 +1,22 @@
-const body = document.querySelector("body");
-keys = document.getElementsByClassName("key");
-audios = document.getElementsByTagName("audio");
+const keys = document.querySelectorAll(".key");
 
-body.addEventListener("keypress", (event) => {
-  const keyCode = event.code;
-  playSound(keyCode);
-  styleElement(keyCode);
-});
-
-function playSound(keyPressed) {
-  // Play Sound
-  for (const key in audios) {
-    if (Object.hasOwnProperty.call(audios, key)) {
-      const element = audios[key];
-      if (element.dataset.key === keyPressed) {
-        element.currentTime = 0;
-        element.play();
-      }
-    }
-  }
+function removeStyle(event) {
+  event.target.classList.remove("playing");
 }
 
-function styleElement(keyPressed) {
+function playAndStyle(event) {
+  const keyPressed = document.querySelector(`.key[data-key="${event.code}"]`);
+  const audio = document.querySelector(`audio[data-key="${event.code}"]`);
   // Apply Style
-  for (const key in keys) {
-    if (Object.hasOwnProperty.call(keys, key)) {
-      const element = keys[key];
-      if (element.dataset.key === keyPressed) {
-        element.classList.toggle("playing");
-        setTimeout(() => element.classList.toggle("playing"), 100);
-      } else {
-        element.classList.remove("playing");
-      }
-    }
+  keyPressed ? keyPressed.classList.add("playing") : 0;
+
+  // Play Sound
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play();
   }
 }
+
+document.addEventListener("keypress", playAndStyle);
+
+keys.forEach((key) => key.addEventListener("transitionend", removeStyle));
